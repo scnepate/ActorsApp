@@ -9,6 +9,7 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "MainPage.h"
 
 //==============================================================================
 class ActorsAppApplication  : public JUCEApplication
@@ -55,24 +56,29 @@ public:
         MainWindow (String name) : DocumentWindow (name, Colours::lightgrey, DocumentWindow::allButtons)
         {
             //...
-            setUsingNativeTitleBar (true);
 
             #if JUCE_IOS || JUCE_ANDROID
                 setFullScreen (true);
             #else
                 setResizable (true, true);
-                centreWithSize (getWidth(), getHeight());
+                centreWithSize (600, 400);
             #endif
+            setUsingNativeTitleBar (true);
+
+            mainPage = new MainPage ();
+            setContentOwned (mainPage, true);
 
             setVisible (true);
         }
 
         void closeButtonPressed () override
         {
+            mainPage = nullptr;
             JUCEApplication::getInstance ()->systemRequestedQuit ();
         }
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
+        ScopedPointer<MainPage> mainPage;
     };
 
 private:
