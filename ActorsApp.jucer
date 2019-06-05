@@ -3,6 +3,10 @@
 <JUCERPROJECT id="HPDLYj" name="ActorsApp" projectType="guiapp" jucerVersion="5.4.3">
   <MAINGROUP id="zmWY2H" name="ActorsApp">
     <GROUP id="{439E9284-BF42-DB3A-42F8-15C59AE11E37}" name="Source">
+      <FILE id="dW9wzT" name="MainContentComponent.h" compile="0" resource="0"
+            file="Source/MainContentComponent.h"/>
+      <FILE id="ORcvi4" name="MainContentComponent.cpp" compile="1" resource="0"
+            file="Source/MainContentComponent.cpp"/>
       <FILE id="utkAIj" name="MainPage.h" compile="0" resource="0" file="Source/MainPage.h"/>
       <FILE id="EtvQJL" name="MainPage.cpp" compile="1" resource="0" file="Source/MainPage.cpp"/>
       <FILE id="m74CeZ" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

@@ -21,17 +21,17 @@ MainPage::MainPage()
     addAndMakeVisible (showList);
     showList.setButtonText ("Show List");
     showList.setSize (getWidth ()/2, getHeight ()/10);
-    showList.setCentreRelative (0.5f, 0.2f);
+    showList.setCentreRelative (0.5f, 0.25f);
 
     addAndMakeVisible (showSearch);
     showSearch.setButtonText ("Search Actor");
     showSearch.setSize (getWidth ()/2, getHeight ()/10);
-    showSearch.setCentreRelative (0.5f, 0.4f);
+    showSearch.setCentreRelative (0.5f, 0.5f);
 
     addAndMakeVisible (updateDB);
     updateDB.setButtonText ("Update DB");
     updateDB.setSize (getWidth ()/2, getHeight ()/10);
-    updateDB.setCentreRelative (0.5f, 0.6f);
+    updateDB.setCentreRelative (0.5f, 0.75f);
 }
 
 MainPage::~MainPage()
@@ -47,7 +47,7 @@ void MainPage::paint (Graphics& g)
        drawing code..
     */
 
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
+    // g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
     // g.setColour (Colours::grey);
     // g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
@@ -63,9 +63,9 @@ void MainPage::resized()
     // This method is where you should set the bounds of any child
     // components that your component contains..
     showList.setSize (getWidth ()/2, getHeight ()/10);
-    showList.setCentreRelative (0.5f, 0.2f);
+    showList.setCentreRelative (0.5f, 0.25f);
     showSearch.setSize (getWidth ()/2, getHeight ()/10);
-    showSearch.setCentreRelative (0.5f, 0.4f);
+    showSearch.setCentreRelative (0.5f, 0.5f);
     updateDB.setSize (getWidth ()/2, getHeight ()/10);
-    updateDB.setCentreRelative (0.5f, 0.6f);
+    updateDB.setCentreRelative (0.5f, 0.75f);
 }

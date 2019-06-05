@@ -9,7 +9,7 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "MainPage.h"
+#include "MainContentComponent.h"
 
 //==============================================================================
 class ActorsAppApplication  : public JUCEApplication
@@ -26,7 +26,7 @@ public:
     void initialise (const String& commandLine) override
     {
         // Add your application's initialisation code here..
-        mainWindow = new MainWindow (getApplicationName ());
+        mainWindow.reset (new MainWindow (getApplicationName ()));
     }
 
     void shutdown() override
@@ -55,34 +55,29 @@ public:
     public:
         MainWindow (String name) : DocumentWindow (name, Colours::lightgrey, DocumentWindow::allButtons)
         {
-            //...
+            setUsingNativeTitleBar (true);
+            setContentOwned (new MainContentComponent (), true);
 
             #if JUCE_IOS || JUCE_ANDROID
                 setFullScreen (true);
             #else
                 setResizable (true, true);
-                centreWithSize (600, 400);
+                centreWithSize (getWidth (), getHeight ());
             #endif
-            setUsingNativeTitleBar (true);
-
-            mainPage = new MainPage ();
-            setContentOwned (mainPage, true);
 
             setVisible (true);
         }
 
         void closeButtonPressed () override
         {
-            mainPage = nullptr;
             JUCEApplication::getInstance ()->systemRequestedQuit ();
         }
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
-        ScopedPointer<MainPage> mainPage;
     };
 
 private:
-    ScopedPointer<MainWindow> mainWindow;
+    std::unique_ptr <MainWindow> mainWindow;
 };
 
 //==============================================================================
