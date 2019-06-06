@@ -32,8 +32,7 @@
                    androidExternalWriteNeeded="0" androidMinimumSDK="23" androidExtraAssetsFolder="data/assets"
                    gradleToolchain="clang">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="~/JUCE/&#10;" libraryPath="~/JUCE/"
-                       defines="~/JUCE/"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="~/JUCE/&#10;" libraryPath="~/JUCE/"/>
         <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

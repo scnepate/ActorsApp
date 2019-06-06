@@ -34,9 +34,9 @@ public:
         var parsed = JSON::parse (downloadData);
         var* resultData = new var (parsed);
         resultData->getDynamicObject ()->removeProperty ("page");
-        int numberOfPages = parsed.getProperty ("total_pages", var::undefined);
+        int numberOfPages = parsed.getProperty ("total_pages", var::null);
 
-        Array<var>* results = parsed.getProperty ("results", var::undefined).getArray ();
+        Array<var>* results = parsed.getProperty ("results", var::null).getArray ();
         for (auto j: *results)
             j.getDynamicObject ()->removeProperty ("known_for");
 
@@ -45,25 +45,32 @@ public:
         {
             api_endpoint = "https://api.themoviedb.org/3/person/popular?api_key=24fbfcd0f7c48ef7fc8efd5b73b559f3&language=en-US&page=" + var (i).toString ();
             url = URL (api_endpoint);
-            parsed = JSON::parse (url.readEntireTextStream ());
-
+            downloadData = url.readEntireTextStream ();
             if (downloadData == "")
             {
-                setStatusMessage ("No Connection!");
-                AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
-                                                  "No Connection",
-                                                  "Please check your connection");
-                return;
+                -- i;
+                continue;
+             //   AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+             //                                     "No Connection",
+             //                                     "Please check your connection");
+             //   return;
             }
+            parsed = JSON::parse (downloadData);
 
-            Array<var>* results = parsed.getProperty ("results", var::undefined).getArray ();
-
+            if (parsed.getProperty ("results", var::null) == var::null)
+            {
+                std::cout << "undefined!\n" << std::flush;
+                std::cout << downloadData <<"\n";
+                wait (10000);
+                --i;
+                continue;
+            }
+            Array<var>* results = parsed.getProperty ("results", var::null).getArray ();
             for (auto j: *results)
             {
                 j.getDynamicObject ()->removeProperty ("known_for");
-                resultData->getProperty ("results", var::undefined).append (j);
+                resultData->getProperty ("results", var::null).append (j);
             }
-
             setProgress (i/(float)numberOfPages);
         }
 
@@ -87,5 +94,6 @@ public:
 
         FileOutputStream out (dataFile);
         JSON::writeToStream (out, *resultData, false);
+        delete resultData;
     }
 };

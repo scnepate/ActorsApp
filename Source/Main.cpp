@@ -24,7 +24,7 @@ public:
 
     //=============================================================================
     void initialise (const String& commandLine) override
-    { 
+    {
         // Add your application's initialisation code here.
         mainWindow.reset (new MainWindow (getApplicationName ()));
 /*        if (!isConnected ())
