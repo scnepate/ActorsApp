@@ -11,7 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-
+#include "UpdateTask.h"
 //=============================================================================
 class MainContentComponent    : public Component,
                                 public Button::Listener
@@ -27,5 +27,6 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
     TextButton showList, showSearch, updateDB;
+    UpdateTask updateTask;
 };
 

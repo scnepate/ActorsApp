@@ -27,7 +27,24 @@ public:
     { 
         // Add your application's initialisation code here.
         mainWindow.reset (new MainWindow (getApplicationName ()));
+/*        if (!isConnected ())
+        {
+            AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+                                              "No Connection",
+                                              "Please check your connection and try again...");
+            systemRequestedQuit ();
+
+        }
+*/
     }
+
+/*
+    bool isConnected () // in background
+    {
+        URL url ("https://api.themoviedb.org/3/person/latest?api_key=24fbfcd0f7c48ef7fc8efd5b73b559f3&language=en-US");
+        return !(url.readEntireTextStream ().isEmpty ());
+    }
+*/
 
     void shutdown() override
     {
@@ -66,7 +83,6 @@ public:
             #endif
 
             setVisible (true);
-            //AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon, "No Connection", "Please check your connection and try again...")
         }
 
         void closeButtonPressed () override

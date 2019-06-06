@@ -25,9 +25,11 @@ MainContentComponent::MainContentComponent()
 
     addAndMakeVisible (showSearch);
     showSearch.setButtonText ("Search Actor");
+    showSearch.addListener (this);
 
     addAndMakeVisible (updateDB);
     updateDB.setButtonText ("Update DB");
+    updateDB.addListener (this);
 
 
     showList.setSize (getWidth ()/2, getHeight ()/8);
@@ -49,6 +51,15 @@ void MainContentComponent::buttonClicked (Button *button)
        button->setVisible (false);
        showSearch.setVisible (false);
        updateDB.setVisible (false);
+    }
+    else if (button == &showSearch)
+    {
+
+    }
+    else if (button == &updateDB)
+    {
+        updateTask.runThread ();
+        //updateTask.threadComplete ();
     }
 }
 
