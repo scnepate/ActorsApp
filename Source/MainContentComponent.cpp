@@ -58,8 +58,8 @@ void MainContentComponent::buttonClicked (Button *button)
     }
     else if (button == &updateDB)
     {
-        updateTask.runThread ();
-        //updateTask.threadComplete ();
+        updateTask.launchThread ();
+        //updateTask.threadComplete (0);
     }
 }
 
