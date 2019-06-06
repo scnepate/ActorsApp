@@ -17,12 +17,41 @@ MainContentComponent::MainContentComponent()
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
     setSize (600, 400);
-    addAndMakeVisible (mainPage);
+
+
+    addAndMakeVisible (showList);
+    showList.setButtonText ("Show List");
+    showList.addListener (this);
+
+    addAndMakeVisible (showSearch);
+    showSearch.setButtonText ("Search Actor");
+
+    addAndMakeVisible (updateDB);
+    updateDB.setButtonText ("Update DB");
+
+
+    showList.setSize (getWidth ()/2, getHeight ()/8);
+    showList.setCentreRelative (0.5f, 0.25f);
+    showSearch.setSize (getWidth ()/2, getHeight ()/8);
+    showSearch.setCentreRelative (0.5f, 0.5f);
+    updateDB.setSize (getWidth ()/2, getHeight ()/8);
+    updateDB.setCentreRelative (0.5f, 0.75f);
 }
 
 MainContentComponent::~MainContentComponent()
 {
 }
+
+void MainContentComponent::buttonClicked (Button *button)
+{
+    if (button == &showList)
+    {
+        button->setVisible (false);
+        showSearch.setVisible (false);
+        updateDB.setVisible (false);
+    }
+}
+
 
 void MainContentComponent::paint (Graphics& g)
 {
@@ -48,5 +77,11 @@ void MainContentComponent::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..
-    mainPage.setBounds (0, 0, getWidth (), getHeight ());
+
+    showList.setSize (getWidth ()/2, getHeight ()/8);
+    showList.setCentreRelative (0.5f, 0.25f);
+    showSearch.setSize (getWidth ()/2, getHeight ()/8);
+    showSearch.setCentreRelative (0.5f, 0.5f);
+    updateDB.setSize (getWidth ()/2, getHeight ()/8);
+    updateDB.setCentreRelative (0.5f, 0.75f);
 }

@@ -66,6 +66,7 @@ public:
             #endif
 
             setVisible (true);
+            //AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon, "No Connection", "Please check your connection and try again...");
         }
 
         void closeButtonPressed () override
