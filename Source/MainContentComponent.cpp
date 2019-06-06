@@ -1,21 +1,21 @@
 /*
-  ==============================================================================
+  =============================================================================
 
     MainContentComponent.cpp
-    Created: 5 Jun 2019 11:01:40pm
+    Created: 5 Jun 2019 11:01:40
     Author:  renyxa
 
-  ==============================================================================
+  =============================================================================
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainContentComponent.h"
 
-//==============================================================================
+//=============================================================================
 MainContentComponent::MainContentComponent()
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
+    // In your constructor, you should add any child components, an
+    // initialise any special settings that your component needs
     setSize (600, 400);
 
 
@@ -46,37 +46,37 @@ void MainContentComponent::buttonClicked (Button *button)
 {
     if (button == &showList)
     {
-        button->setVisible (false);
-        showSearch.setVisible (false);
-        updateDB.setVisible (false);
+       button->setVisible (false);
+       showSearch.setVisible (false);
+       updateDB.setVisible (false);
     }
 }
 
 
 void MainContentComponent::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
+    /* This demo code just fills the component's background an
+       draws some placeholder text to get you started
 
        You should replace everything in this method with your own
-       drawing code..
+       drawing code.
     */
 
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
-    // g.setColour (Colours::grey);
+    // g.setColour (Colours::grey)
     // g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
-    // g.setColour (Colours::white);
-    // g.setFont (14.0f);
-    // g.drawText ("MainContentComponent", getLocalBounds(),
+    // g.setColour (Colours::white)
+    // g.setFont (14.0f)
+    // g.drawText ("MainContentComponent", getLocalBounds())
     //             Justification::centred, true);   // draw some placeholder text
 }
 
-void MainContentComponent::resized()
+void MainContentComponent::resized ()
 {
     // This method is where you should set the bounds of any child
-    // components that your component contains..
+    // components that your component contains.
 
     showList.setSize (getWidth ()/2, getHeight ()/8);
     showList.setCentreRelative (0.5f, 0.25f);
@@ -85,3 +85,4 @@ void MainContentComponent::resized()
     updateDB.setSize (getWidth ()/2, getHeight ()/8);
     updateDB.setCentreRelative (0.5f, 0.75f);
 }
+
