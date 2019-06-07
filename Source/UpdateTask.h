@@ -24,7 +24,6 @@ public:
 
         if (downloadData == "")
         {
-            //setStatusMessage ("No Connection!");
             AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
                                               "No Connection",
                                               "Please check your connection.");
@@ -50,17 +49,13 @@ public:
             {
                 -- i;
                 continue;
-             //   AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
-             //                                     "No Connection",
-             //                                     "Please check your connection");
-             //   return;
             }
             parsed = JSON::parse (downloadData);
 
             if (parsed.getProperty ("results", var::null) == var::null)
             {
-                std::cout << "undefined!\n" << std::flush;
-                std::cout << downloadData <<"\n";
+                //std::cout << "undefined!\n" << std::flush;
+                //std::cout << downloadData <<"\n";
                 wait (10000);
                 --i;
                 continue;
@@ -80,7 +75,7 @@ public:
         }
 
         File assetsDirectory = File::getSpecialLocation (File::userApplicationDataDirectory).getChildFile ("data").getChildFile ("assets");
-        //std::cout << assetsDirectory.getFullPathName () << std::endl;
+//        std::cout << assetsDirectory.getFullPathName () << std::endl;
 
         if (!assetsDirectory.exists ())
         {
@@ -88,12 +83,11 @@ public:
         }
 
         File dataFile = assetsDirectory.getChildFile ("data.json");
-
-        if (!dataFile.exists ())
-            dataFile.create ();
+        if (dataFile.exists ()) dataFile.deleteFile ();
+        dataFile.create ();
 
         FileOutputStream out (dataFile);
-        JSON::writeToStream (out, *resultData, false);
+        JSON::writeToStream (out, *resultData, true);
         delete resultData;
     }
 };

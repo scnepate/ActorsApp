@@ -4,6 +4,7 @@
               maxBinaryFileSize="20971520" projectLineFeed="&#10;">
   <MAINGROUP id="zmWY2H" name="ActorsApp">
     <GROUP id="{439E9284-BF42-DB3A-42F8-15C59AE11E37}" name="Source">
+      <FILE id="ac24Jn" name="ActorsListBox.h" compile="0" resource="0" file="Source/ActorsListBox.h"/>
       <FILE id="qPh18N" name="UpdateTask.h" compile="0" resource="0" file="Source/UpdateTask.h"/>
       <FILE id="dW9wzT" name="MainContentComponent.h" compile="0" resource="0"
             file="Source/MainContentComponent.h"/>

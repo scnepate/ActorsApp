@@ -31,13 +31,30 @@ MainContentComponent::MainContentComponent()
     updateDB.setButtonText ("Update DB");
     updateDB.addListener (this);
 
-
     showList.setSize (getWidth ()/2, getHeight ()/8);
     showList.setCentreRelative (0.5f, 0.25f);
     showSearch.setSize (getWidth ()/2, getHeight ()/8);
     showSearch.setCentreRelative (0.5f, 0.5f);
     updateDB.setSize (getWidth ()/2, getHeight ()/8);
     updateDB.setCentreRelative (0.5f, 0.75f);
+
+
+    addChildComponent (back);
+    back.setBounds (getWidth ()-105, getHeight ()-45, 100, 40);
+    back.setButtonText ("Back");
+
+    addChildComponent (searchText);
+    searchText.setText ("First Name", dontSendNotification);
+    addChildComponent (triggerSearchButton);
+    triggerSearchButton.setButtonText ("Search");
+    searchText.setBounds (20, 20, getWidth ()-130, 26);
+    triggerSearchButton.setBounds (getWidth ()-100, 20, 80, 26);
+    searchText.setFont (22.0f);
+    searchText.setEditable (true);
+    addChildComponent (searchResult);
+    searchResult.setBounds (0, 50, getWidth (), getHeight ()-100);
+    searchResult.setFont (getHeight ()/2.0f);
+    searchResult.setJustificationType (Justification::centred);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -48,21 +65,100 @@ void MainContentComponent::buttonClicked (Button *button)
 {
     if (button == &showList)
     {
-       button->setVisible (false);
+       LoadActorsTask loadActorsTask (&actors, this);
+       loadActorsTask.runThread ();
+       if (!loadActorsTask.getState ())
+       {
+            AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+                                              "Data not found!",
+                                              "Please update database first.");
+            return;
+       }
+
+       showList.setVisible (false);
        showSearch.setVisible (false);
        updateDB.setVisible (false);
+       back.setVisible (true);
+       back.addListener (this);
+
+       // allocate new ListBox
     }
     else if (button == &showSearch)
     {
+       LoadActorsTask loadActorsTask (&actors, this);
+       loadActorsTask.runThread ();
+       if (!loadActorsTask.getState ())
+       {
+            AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+                                              "Data not found!",
+                                              "Please update database first.");
+            return;
+       }
 
+       showList.setVisible (false);
+       showSearch.setVisible (false);
+       updateDB.setVisible (false);
+       back.setVisible (true);
+       back.addListener (this);
+       triggerSearchButton.setVisible (true);
+       triggerSearchButton.addListener (this);
+
+       searchText.setVisible (true);
+       searchText.grabKeyboardFocus ();
     }
-    else if (button == &updateDB)
+    else if (button == &updateDB) // ok
     {
         updateTask.launchThread ();
-        //updateTask.threadComplete (0);
+    }
+    else if (button == &back)
+    {
+        button->setVisible (false);
+
+        if (searchText.isVisible ())
+        {
+            searchText.setVisible (false);
+            searchText.setText ("First Name", dontSendNotification);
+            triggerSearchButton.setVisible (false);
+            searchResult.setVisible (false);
+            triggerSearchButton.removeListener (this);
+        }
+        else
+        {
+
+        }
+
+        showList.setVisible (true);
+        showSearch.setVisible (true);
+        updateDB.setVisible (true);
+
+        button->removeListener (this);
+    }
+    else if (button == &triggerSearchButton)
+    {
+        if (searchText.getText ().isEmpty ()) return;
+        searchText.setText (searchText.getText ().trimCharactersAtStart (" ").trimCharactersAtEnd (" "), dontSendNotification);
+        int result = 0;
+        for (auto i: actors)
+        {
+            String name = i.getProperty ("name", String ());
+            if (name.isNotEmpty ())
+            {
+                String firstName;
+                int spaceIndex = name.indexOfChar (' ');
+                if (spaceIndex == -1) firstName = name;
+                else firstName = name.substring (0, name.indexOfChar (' '));
+
+                if (firstName.toLowerCase () == searchText.getText ().toLowerCase ())
+                {
+                    ++ result;
+                }
+            }
+        }
+
+        searchResult.setVisible (true);
+        searchResult.setText (var (result).toString (), dontSendNotification);
     }
 }
-
 
 void MainContentComponent::paint (Graphics& g)
 {
@@ -75,10 +171,14 @@ void MainContentComponent::paint (Graphics& g)
 
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
-    // g.setColour (Colours::grey)
-    // g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    if (searchText.isVisible ())
+    {
+        g.setColour (Colours::white);
+        //g.drawText ("Enter Name: ", searchText.getBounds ());
+        g.setColour (Colours::grey);
+        g.drawRect (searchText.getBounds(), 1);   // draw an outline around the component
+    }
 
-    // g.setColour (Colours::white)
     // g.setFont (14.0f)
     // g.drawText ("MainContentComponent", getLocalBounds())
     //             Justification::centred, true);   // draw some placeholder text
@@ -95,5 +195,10 @@ void MainContentComponent::resized ()
     showSearch.setCentreRelative (0.5f, 0.5f);
     updateDB.setSize (getWidth ()/2, getHeight ()/8);
     updateDB.setCentreRelative (0.5f, 0.75f);
+    back.setBounds (getWidth ()-105, getHeight ()-45, 100, 40);
+    searchText.setBounds (20, 20, getWidth ()-130, 26);
+    triggerSearchButton.setBounds (getWidth ()-100, 20, 80, 26);
+    searchResult.setBounds (0, 50, getWidth (), getHeight ()-100);
+    searchResult.setFont (getHeight ()/2.0f);
 }
 
