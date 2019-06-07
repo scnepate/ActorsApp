@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    UpdateTask.h
+    ThreadTasks.h
     Created: 6 Jun 2019 5:56:37pm
     Author:  renyxa
 
@@ -90,4 +90,49 @@ public:
         JSON::writeToStream (out, *resultData, true);
         delete resultData;
     }
+};
+
+
+
+
+class LoadActorsTask : public ThreadWithProgressWindow
+{
+public:
+    LoadActorsTask (std::vector <var> *actors, Component *comp) : actors (actors), ThreadWithProgressWindow ("Loading Actors", true, false, 10000, String (), comp) {}
+
+    void run ()
+    {
+        actors->clear ();
+        File dataFile = File::getSpecialLocation (File::userApplicationDataDirectory).getChildFile ("data").getChildFile ("assets").getChildFile ("data.json");
+        if (!dataFile.exists ())
+        {
+            return;
+        }
+
+        FileInputStream fin (dataFile);
+
+        String line = fin.readNextLine ();
+        //std::cout << line << "\n";
+
+        setProgress (0.5);
+        var parsed = JSON::parse (line);
+
+        int total_results = parsed.getProperty ("total_results", var(1));
+        int cnt = 1;
+
+        for (auto i: *parsed.getProperty ("results", var::undefined).getArray ())
+        {
+            actors->push_back (i);
+            setProgress ((cnt ++)/(float)total_results);
+            //std::cout << "cnt: " << cnt << "\n";
+        }
+    }
+
+    bool isOk ()
+    {
+        File dataFile = File::getSpecialLocation (File::userApplicationDataDirectory).getChildFile ("data").getChildFile ("assets").getChildFile ("data.json");
+        return dataFile.exists ();
+    }
+private:
+    std::vector <var> *actors;
 };

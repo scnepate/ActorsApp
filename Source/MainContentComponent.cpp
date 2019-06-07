@@ -12,7 +12,7 @@
 #include "MainContentComponent.h"
 
 //=============================================================================
-MainContentComponent::MainContentComponent()
+MainContentComponent::MainContentComponent() : loadActorsTask (&actors, this)
 {
     // In your constructor, you should add any child components, an
     // initialise any special settings that your component needs
@@ -65,15 +65,14 @@ void MainContentComponent::buttonClicked (Button *button)
 {
     if (button == &showList)
     {
-       LoadActorsTask loadActorsTask (&actors, this);
-       loadActorsTask.runThread ();
-       if (!loadActorsTask.getState ())
+       if (!loadActorsTask.isOk ())
        {
             AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
                                               "Data not found!",
                                               "Please update database first.");
             return;
        }
+       else loadActorsTask.launchThread ();
 
        showList.setVisible (false);
        showSearch.setVisible (false);
@@ -85,15 +84,14 @@ void MainContentComponent::buttonClicked (Button *button)
     }
     else if (button == &showSearch)
     {
-       LoadActorsTask loadActorsTask (&actors, this);
-       loadActorsTask.runThread ();
-       if (!loadActorsTask.getState ())
+       if (!loadActorsTask.isOk ())
        {
             AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
                                               "Data not found!",
                                               "Please update database first.");
             return;
        }
+       else loadActorsTask.launchThread ();
 
        showList.setVisible (false);
        showSearch.setVisible (false);

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="HPDLYj" name="ActorsApp" projectType="guiapp" jucerVersion="5.4.3"
-              maxBinaryFileSize="20971520" projectLineFeed="&#10;">
+              maxBinaryFileSize="20971520" projectLineFeed="&#10;" cppLanguageStandard="17">
   <MAINGROUP id="zmWY2H" name="ActorsApp">
     <GROUP id="{439E9284-BF42-DB3A-42F8-15C59AE11E37}" name="Source">
       <FILE id="ac24Jn" name="ActorsListBox.h" compile="0" resource="0" file="Source/ActorsListBox.h"/>
-      <FILE id="qPh18N" name="UpdateTask.h" compile="0" resource="0" file="Source/UpdateTask.h"/>
+      <FILE id="qPh18N" name="ThreadTasks.h" compile="0" resource="0" file="Source/ThreadTasks.h"/>
       <FILE id="dW9wzT" name="MainContentComponent.h" compile="0" resource="0"
             file="Source/MainContentComponent.h"/>
       <FILE id="ORcvi4" name="MainContentComponent.cpp" compile="1" resource="0"
@@ -31,7 +31,7 @@
     </LINUX_MAKE>
     <ANDROIDSTUDIO targetFolder="Builds/Android" androidBluetoothNeeded="0" androidExternalReadNeeded="0"
                    androidExternalWriteNeeded="0" androidMinimumSDK="23" androidExtraAssetsFolder="data/assets"
-                   gradleToolchain="clang">
+                   gradleToolchain="clang" enableGNUExtensions="1">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="~/JUCE/&#10;" libraryPath="~/JUCE/"/>
         <CONFIGURATION isDebug="0" name="Release"/>
