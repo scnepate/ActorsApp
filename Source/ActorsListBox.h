@@ -59,7 +59,7 @@ public:
         g.setFont (width/12);
         g.drawText (items[rowNumber].name, width/3, 0, width-width/3, height/2, Justification::centred, true);
         g.drawText (items[rowNumber].popularity, width/3, height/2, width-width/3, height/2, Justification::centred, true);
-        g.drawImageWithin (items[rowNumber].photo, 0, 0, width/3, height, RectanglePlacement::onlyReduceInSize | RectanglePlacement::centred);
+        g.drawImageWithin (items[rowNumber].photo, 1, 1, width/3-1, height-1, RectanglePlacement::onlyReduceInSize | RectanglePlacement::centred);
     }
 
     void addFresh ()
