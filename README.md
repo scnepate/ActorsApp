@@ -1,6 +1,6 @@
 # ActorsApp
 This is my first application. It is targeted for Android, but is written, using cross-platfrom library, JUCE.
-Purpose of application is able:
+Purpose of application is:
 * To extract data from themoviedb.org,
 * To show extracted data as a list,
 * To count number of people with first name give.
