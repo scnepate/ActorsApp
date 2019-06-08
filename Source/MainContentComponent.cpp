@@ -18,6 +18,17 @@ MainContentComponent::MainContentComponent()
     // initialise any special settings that your component needs
     setSize (600, 400);
 
+    addAndMakeVisible (loadText);
+    loadText.setFont (getHeight ()/4);
+    loadText.setText ("Loading...", dontSendNotification);
+
+    if (!loadActors ())
+    {
+        AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+                          "Data not found!",
+                          "Please update database first.");
+    }
+    loadText.setVisible (false);
 
     addAndMakeVisible (showList);
     showList.setButtonText ("Show List");
@@ -66,63 +77,83 @@ MainContentComponent::~MainContentComponent()
     }
 }
 
+bool MainContentComponent::isThereData ()
+{
+    File dataFile = File::getSpecialLocation (File::userApplicationDataDirectory).getChildFile ("data").getChildFile ("assets").getChildFile ("data.json");
+    return dataFile.exists ();
+}
 
 bool MainContentComponent::loadActors ()
 {
-    double progress = 0.05;
-    AlertWindow *alert = getLookAndFeel ().createAlertWindow ("Loading", "Please wait...", {}, {}, {}, AlertWindow::NoIcon, 0, this);
-    alert->addProgressBarComponent (progress);
-
-    LoadActorsTask *loadActorsTask = new LoadActorsTask (&actors, alert, &progress);
-
-    if (!loadActorsTask->isOk ())
+    actors.clear ();
+    File dataFile = File::getSpecialLocation (File::userApplicationDataDirectory).getChildFile ("data").getChildFile ("assets").getChildFile ("data.json");
+    if (!dataFile.exists ())
     {
-        AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
-                          "Data not found!",
-                          "Please update database first.");
-        delete alert;
-        delete loadActorsTask;
         return false;
     }
 
-    loadActorsTask->startThread ();
-    alert->runModalLoop ();
+    FileInputStream fin (dataFile);
 
-    delete loadActorsTask;
-    delete alert;
+    String line = fin.readNextLine ();
+
+    var parsed = JSON::parse (line);
+
+    for (auto i: *parsed.getProperty ("results", var::undefined).getArray ())
+    {
+        actors.push_back (i);
+    }
+
     return true;
 }
-
 
 void MainContentComponent::buttonClicked (Button *button)
 {
     if (button == &showList)
     {
-       if (!loadActors ()) return;
+       if (!isThereData ())
+       {
+            AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+                              "Data not found!",
+                              "Please update database first.");
+            return;
+       }
 
        showList.setVisible (false);
        showSearch.setVisible (false);
        updateDB.setVisible (false);
        back.setVisible (true);
        back.addListener (this);
+       loadText.setVisible (true);
+       loadActors ();
 
        // allocate new ListBox
        list = new ListBox ("comp");
        listBoxModel = new ActorsListBoxModel (&actors, list);
        list->setModel (listBoxModel);
+       loadText.setVisible (false);
        addAndMakeVisible (list);
+       back.toFront (false);
        list->setBounds (getLocalBounds ());
-       list->setRowHeight (64);
+       list->setRowHeight (278);
     }
     else if (button == &showSearch) // ok
     {
-       if (!loadActors ()) return;
+       if (!isThereData ())
+       {
+            AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+                              "Data not found!",
+                              "Please update database first.");
+            return;
+       }
 
        showList.setVisible (false);
        showSearch.setVisible (false);
        updateDB.setVisible (false);
        back.setVisible (true);
        back.addListener (this);
+       loadText.setVisible (true);
+       loadActors ();
+       loadText.setVisible (false);
        triggerSearchButton.setVisible (true);
        triggerSearchButton.addListener (this);
 

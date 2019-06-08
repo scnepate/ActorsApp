@@ -12,33 +12,23 @@
 #include <vector>
 #include "ThreadTasks.h"
 
-
 struct ActorItem
 {
     ActorItem (var item)
     {
         name = item.getProperty ("name", "No Name");
         photoAddress = item.getProperty ("profile_path", "");
-        popularity = item.getProperty ("popularity", 0.0);
-        DownloadImage::downloadImage (photoAddress, photo);
+        popularity = item.getProperty ("popularity", "");
 
-        std::cout << "ActorItem: " << name << " " << popularity << "\n";
+        DownloadImage d;
+        d.downloadImage (photoAddress, photo);
+
+        std::cout << "ActorItem: " << name << " " << popularity << " " << photoAddress << "\n";
     }
 
-/*
-    void paint (Graphics &g) override
-    {
-        g.fillAll (Colours::white);
-    }
-
-    void resized () override
-    {
-
-    }
-*/
     Image photo;
     String photoAddress, name;
-    float popularity;
+    String popularity;
 };
 
 class ActorsListBoxModel : public ListBoxModel
@@ -60,32 +50,39 @@ public:
 
     void paintListBoxItem (int rowNumber, Graphics &g, int width, int height, bool rowIsSelected) override
     {
-        //items[rowNumber].paintEntireComponent (g, false);
-        g.setFont (height);
+        g.setColour (Colours::grey);
+        g.drawRect (0, 0, width, height, 1);
+        g.drawLine (width/3, 0, width/3, height, 1);
+        g.drawLine (width/3, height/2, width, height/2, 1);
+
         g.setColour (Colours::white);
-        g.drawText (items[rowNumber].name, 0, 0, width, height, Justification::centred, true);
+        g.setFont (width/12);
+        g.drawText (items[rowNumber].name, width/3, 0, width-width/3, height/2, Justification::centred, true);
+        g.drawText (items[rowNumber].popularity, width/3, height/2, width-width/3, height/2, Justification::centred, true);
+        g.drawImageWithin (items[rowNumber].photo, 0, 0, width/3, height, RectanglePlacement::onlyReduceInSize | RectanglePlacement::centred);
     }
 
     void addFresh ()
     {
         int n = getNumRows ();
-        for (int i = n; i < n+20 && i < actors->size (); ++ i)
-        {
-            items.push_back (ActorItem (actors->at (i)));
-        }
+        items.push_back (ActorItem (actors->at (n)));
     }
 
     void listWasScrolled () override
     {
-        if (listBox->getVerticalPosition () > 0.95)
+        if (listBox->getVerticalPosition () > 0.70)
         {
-            addFresh ();
-            listBox->updateContent ();
+            for (int i = 0; i < 10; ++ i)
+            {
+                addFresh ();
+                listBox->updateContent ();
+            }
         }
     }
 private:
     std::vector <ActorItem> items;
     std::vector <var> *actors;
     ListBox *listBox;
+    // add some background task
 };
 

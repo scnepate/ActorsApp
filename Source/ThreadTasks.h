@@ -9,6 +9,34 @@
 */
 #pragma once
 
+class DownloadImage : public Thread
+{
+public:
+    DownloadImage () : Thread ("downlaodImage") {}
+    void run () override
+    {
+        //File f ("~/Desktop/hello.jpg");
+        //url.downloadToFile (f);
+        InputStream *inp = url.createInputStream (true);
+        JPEGImageFormat jpg;
+        newImage = jpg.decodeImage (*inp);
+        delete inp;
+        //std::cout << "width: " << newImage.getWidth () << " height: " << newImage.getHeight () << "\n";
+    }
+    void downloadImage (String address, Image &image)
+    {
+        //std::cout << "download from: " << "https://image.tmdb.org/t/p/w185" + address << "\n";
+        url = URL ("https://image.tmdb.org/t/p/w185" + address); // w45
+        startThread ();
+        while (isThreadRunning ());
+        image = newImage;
+        //std::cout << "width: " << image.getWidth () << " height: " << image.getHeight () << "\n";
+    }
+private:
+    URL url;
+    Image newImage;
+};
+
 class UpdateTask : public ThreadWithProgressWindow
 {
 public:
@@ -33,12 +61,11 @@ public:
         var parsed = JSON::parse (downloadData);
         var* resultData = new var (parsed);
         resultData->getDynamicObject ()->removeProperty ("page");
-        int numberOfPages = parsed.getProperty ("total_pages", var::undefined);
+        int numberOfPages = parsed.getProperty ("total_pages", var::null);
 
-        Array<var>* results = parsed.getProperty ("results", var::undefined).getArray ();
+        Array<var>* results = parsed.getProperty ("results", var::null).getArray ();
         for (auto j: *results)
             j.getDynamicObject ()->removeProperty ("known_for");
-
 
         for (int i = 2; i <= numberOfPages && !threadShouldExit (); ++ i)
         {
@@ -52,7 +79,7 @@ public:
             }
             parsed = JSON::parse (downloadData);
 
-            if (parsed.getProperty ("results", var::undefined) == var::undefined)
+            if (parsed.getProperty ("results", var::null) == var::null)
             {
                 //std::cout << "undefined!\n" << std::flush;
                 //std::cout << downloadData <<"\n";
@@ -60,11 +87,11 @@ public:
                 --i;
                 continue;
             }
-            Array<var>* results = parsed.getProperty ("results", var::undefined).getArray ();
+            Array<var>* results = parsed.getProperty ("results", var::null).getArray ();
             for (auto j: *results)
             {
                 j.getDynamicObject ()->removeProperty ("known_for");
-                resultData->getProperty ("results", var::undefined).append (j);
+                resultData->getProperty ("results", var::null).append (j);
             }
             setProgress (i/(float)numberOfPages);
         }
@@ -95,54 +122,3 @@ public:
 
 
 
-class LoadActorsTask : public Thread
-{
-public:
-    LoadActorsTask (std::vector <var> *actors, AlertWindow *alertWindow, double *progress) : actors (actors), alertWindow (alertWindow), progress (progress), Thread ("ActorsLoadingThread") {}
-
-    void run ()
-    {
-        actors->clear ();
-        File dataFile = File::getSpecialLocation (File::userApplicationDataDirectory).getChildFile ("data").getChildFile ("assets").getChildFile ("data.json");
-        //if (!dataFile.exists ())
-        //{
-        //    return;
-        //}
-
-        FileInputStream fin (dataFile);
-        String line = fin.readNextLine ();
-        var parsed = JSON::parse (line);
-        *progress = 0.5;
-
-        int total_results = parsed.getProperty ("total_results", -1);
-        int cnt = 1;
-
-        for (auto i: *parsed.getProperty ("results", var::undefined).getArray ())
-        {
-            actors->push_back (i);
-            *progress = (cnt ++)/(double)total_results;
-        }
-        wait (50);
-        alertWindow->exitModalState (1);
-    }
-
-    bool isOk ()
-    {
-        File dataFile = File::getSpecialLocation (File::userApplicationDataDirectory).getChildFile ("data").getChildFile ("assets").getChildFile ("data.json");
-        return dataFile.exists ();
-    }
-private:
-    std::vector <var> *actors;
-    AlertWindow *alertWindow;
-    double *progress;
-};
-
-
-class DownloadImage : public Thread
-{
-public:
-    static void downloadImage (String address, Image &image)
-    {
-        std::cout << "download: " << address << "\n";
-    }
-};

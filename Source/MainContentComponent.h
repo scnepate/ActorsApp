@@ -26,12 +26,14 @@ public:
 
     void buttonClicked (Button* button) override;
     bool loadActors ();
+    bool isThereData ();
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
     TextButton showList, showSearch, updateDB, back;
     TextButton triggerSearchButton;
-    UpdateTask updateTask;
     Label searchText, searchResult;
+    Label loadText;
+    UpdateTask updateTask;
     std::vector <var> actors;
     ActorsListBoxModel *listBoxModel {nullptr};
     ListBox *list {nullptr};
