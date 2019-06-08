@@ -12,7 +12,7 @@
 #include "MainContentComponent.h"
 
 //=============================================================================
-MainContentComponent::MainContentComponent() : loadActorsTask (&actors, this)
+MainContentComponent::MainContentComponent()
 {
     // In your constructor, you should add any child components, an
     // initialise any special settings that your component needs
@@ -59,20 +59,46 @@ MainContentComponent::MainContentComponent() : loadActorsTask (&actors, this)
 
 MainContentComponent::~MainContentComponent()
 {
+    if (list)
+    {
+        delete list;
+        delete listBoxModel;
+    }
 }
+
+
+bool MainContentComponent::loadActors ()
+{
+    double progress = 0.05;
+    AlertWindow *alert = getLookAndFeel ().createAlertWindow ("Loading", "Please wait...", {}, {}, {}, AlertWindow::NoIcon, 0, this);
+    alert->addProgressBarComponent (progress);
+
+    LoadActorsTask *loadActorsTask = new LoadActorsTask (&actors, alert, &progress);
+
+    if (!loadActorsTask->isOk ())
+    {
+        AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
+                          "Data not found!",
+                          "Please update database first.");
+        delete alert;
+        delete loadActorsTask;
+        return false;
+    }
+
+    loadActorsTask->startThread ();
+    alert->runModalLoop ();
+
+    delete loadActorsTask;
+    delete alert;
+    return true;
+}
+
 
 void MainContentComponent::buttonClicked (Button *button)
 {
     if (button == &showList)
     {
-       if (!loadActorsTask.isOk ())
-       {
-            AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
-                                              "Data not found!",
-                                              "Please update database first.");
-            return;
-       }
-       else loadActorsTask.launchThread ();
+       if (!loadActors ()) return;
 
        showList.setVisible (false);
        showSearch.setVisible (false);
@@ -81,17 +107,16 @@ void MainContentComponent::buttonClicked (Button *button)
        back.addListener (this);
 
        // allocate new ListBox
+       list = new ListBox ("comp");
+       listBoxModel = new ActorsListBoxModel (&actors, list);
+       list->setModel (listBoxModel);
+       addAndMakeVisible (list);
+       list->setBounds (getLocalBounds ());
+       list->setRowHeight (64);
     }
-    else if (button == &showSearch)
+    else if (button == &showSearch) // ok
     {
-       if (!loadActorsTask.isOk ())
-       {
-            AlertWindow::showMessageBoxAsync (AlertWindow::AlertIconType::WarningIcon,
-                                              "Data not found!",
-                                              "Please update database first.");
-            return;
-       }
-       else loadActorsTask.launchThread ();
+       if (!loadActors ()) return;
 
        showList.setVisible (false);
        showSearch.setVisible (false);
@@ -122,7 +147,9 @@ void MainContentComponent::buttonClicked (Button *button)
         }
         else
         {
-
+            removeChildComponent (list);
+            delete list;
+            delete listBoxModel;
         }
 
         showList.setVisible (true);
@@ -171,15 +198,9 @@ void MainContentComponent::paint (Graphics& g)
 
     if (searchText.isVisible ())
     {
-        g.setColour (Colours::white);
-        //g.drawText ("Enter Name: ", searchText.getBounds ());
         g.setColour (Colours::grey);
         g.drawRect (searchText.getBounds(), 1);   // draw an outline around the component
     }
-
-    // g.setFont (14.0f)
-    // g.drawText ("MainContentComponent", getLocalBounds())
-    //             Justification::centred, true);   // draw some placeholder text
 }
 
 void MainContentComponent::resized ()
@@ -198,5 +219,7 @@ void MainContentComponent::resized ()
     triggerSearchButton.setBounds (getWidth ()-100, 20, 80, 26);
     searchResult.setBounds (0, 50, getWidth (), getHeight ()-100);
     searchResult.setFont (getHeight ()/2.0f);
+    if (list != nullptr)
+        list->setBounds (getLocalBounds ());
 }
 

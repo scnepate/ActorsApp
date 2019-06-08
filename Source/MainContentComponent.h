@@ -12,7 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ThreadTasks.h"
-//#include "ActorsListBox.h"
+#include "ActorsListBox.h"
 //=============================================================================
 class MainContentComponent    : public Component,
                                 public Button::Listener
@@ -31,8 +31,9 @@ private:
     TextButton showList, showSearch, updateDB, back;
     TextButton triggerSearchButton;
     UpdateTask updateTask;
-    LoadActorsTask loadActorsTask;
     Label searchText, searchResult;
     std::vector <var> actors;
+    ActorsListBoxModel *listBoxModel {nullptr};
+    ListBox *list {nullptr};
 };
 

@@ -33,9 +33,9 @@ public:
         var parsed = JSON::parse (downloadData);
         var* resultData = new var (parsed);
         resultData->getDynamicObject ()->removeProperty ("page");
-        int numberOfPages = parsed.getProperty ("total_pages", var::null);
+        int numberOfPages = parsed.getProperty ("total_pages", var::undefined);
 
-        Array<var>* results = parsed.getProperty ("results", var::null).getArray ();
+        Array<var>* results = parsed.getProperty ("results", var::undefined).getArray ();
         for (auto j: *results)
             j.getDynamicObject ()->removeProperty ("known_for");
 
@@ -52,7 +52,7 @@ public:
             }
             parsed = JSON::parse (downloadData);
 
-            if (parsed.getProperty ("results", var::null) == var::null)
+            if (parsed.getProperty ("results", var::undefined) == var::undefined)
             {
                 //std::cout << "undefined!\n" << std::flush;
                 //std::cout << downloadData <<"\n";
@@ -60,11 +60,11 @@ public:
                 --i;
                 continue;
             }
-            Array<var>* results = parsed.getProperty ("results", var::null).getArray ();
+            Array<var>* results = parsed.getProperty ("results", var::undefined).getArray ();
             for (auto j: *results)
             {
                 j.getDynamicObject ()->removeProperty ("known_for");
-                resultData->getProperty ("results", var::null).append (j);
+                resultData->getProperty ("results", var::undefined).append (j);
             }
             setProgress (i/(float)numberOfPages);
         }
@@ -95,37 +95,35 @@ public:
 
 
 
-class LoadActorsTask : public ThreadWithProgressWindow
+class LoadActorsTask : public Thread
 {
 public:
-    LoadActorsTask (std::vector <var> *actors, Component *comp) : actors (actors), ThreadWithProgressWindow ("Loading Actors", true, false, 10000, String (), comp) {}
+    LoadActorsTask (std::vector <var> *actors, AlertWindow *alertWindow, double *progress) : actors (actors), alertWindow (alertWindow), progress (progress), Thread ("ActorsLoadingThread") {}
 
     void run ()
     {
         actors->clear ();
         File dataFile = File::getSpecialLocation (File::userApplicationDataDirectory).getChildFile ("data").getChildFile ("assets").getChildFile ("data.json");
-        if (!dataFile.exists ())
-        {
-            return;
-        }
+        //if (!dataFile.exists ())
+        //{
+        //    return;
+        //}
 
         FileInputStream fin (dataFile);
-
         String line = fin.readNextLine ();
-        //std::cout << line << "\n";
-
-        setProgress (0.5);
         var parsed = JSON::parse (line);
+        *progress = 0.5;
 
-        int total_results = parsed.getProperty ("total_results", var(1));
+        int total_results = parsed.getProperty ("total_results", -1);
         int cnt = 1;
 
         for (auto i: *parsed.getProperty ("results", var::undefined).getArray ())
         {
             actors->push_back (i);
-            setProgress ((cnt ++)/(float)total_results);
-            //std::cout << "cnt: " << cnt << "\n";
+            *progress = (cnt ++)/(double)total_results;
         }
+        wait (50);
+        alertWindow->exitModalState (1);
     }
 
     bool isOk ()
@@ -135,4 +133,16 @@ public:
     }
 private:
     std::vector <var> *actors;
+    AlertWindow *alertWindow;
+    double *progress;
+};
+
+
+class DownloadImage : public Thread
+{
+public:
+    static void downloadImage (String address, Image &image)
+    {
+        std::cout << "download: " << address << "\n";
+    }
 };
