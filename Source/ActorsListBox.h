@@ -112,7 +112,7 @@ public:
                 items[rowNumber].photo = temp->getImage ();
                 items[rowNumber].isTherePhoto = true;
                 listBox->repaintRow (rowNumber);
-                break;
+                //break;
             }
         }
 
