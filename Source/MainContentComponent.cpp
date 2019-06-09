@@ -16,7 +16,7 @@ MainContentComponent::MainContentComponent()
 {
     // In your constructor, you should add any child components, an
     // initialise any special settings that your component needs
-    setSize (600, 400);
+    setSize (600, 800);
 
     addAndMakeVisible (loadText);
     loadText.setFont (getHeight ()/4);
@@ -181,6 +181,8 @@ void MainContentComponent::buttonClicked (Button *button)
             removeChildComponent (list);
             delete list;
             delete listBoxModel;
+            list = nullptr;
+            listBoxModel = nullptr;
         }
 
         showList.setVisible (true);

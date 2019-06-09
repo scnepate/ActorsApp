@@ -9,33 +9,36 @@
 */
 #pragma once
 
-class DownloadImage : public Thread
+class DownloadImageJob : public ThreadPoolJob
 {
 public:
-    DownloadImage () : Thread ("downlaodImage") {}
-    void run () override
+    DownloadImageJob (String &iA, int ind) : imageAddress (iA), ind (ind), ThreadPoolJob (iA), hasFinished (false) {}
+
+    JobStatus runJob () override
     {
-        //File f ("~/Desktop/hello.jpg");
-        //url.downloadToFile (f);
+        // here we need to download image and assign it to *image.
+        URL url ("https://image.tmdb.org/t/p/w185" + imageAddress);
         InputStream *inp = url.createInputStream (true);
         JPEGImageFormat jpg;
-        newImage = jpg.decodeImage (*inp);
+        image = jpg.decodeImage (*inp);
         delete inp;
-        //std::cout << "width: " << newImage.getWidth () << " height: " << newImage.getHeight () << "\n";
+        hasFinished = true;
+        //std::cout << "DownloadImageJob: " << imageAddress << "\n" << std::flush;
+        signalJobShouldExit ();
+        return jobHasFinished;
     }
-    void downloadImage (String address, Image &image)
-    {
-        //std::cout << "download from: " << "https://image.tmdb.org/t/p/w185" + address << "\n";
-        url = URL ("https://image.tmdb.org/t/p/w185" + address); // w45
-        startThread ();
-        while (isThreadRunning ());
-        image = newImage;
-        //std::cout << "width: " << image.getWidth () << " height: " << image.getHeight () << "\n";
-    }
+
+    Image getImage () { return image; }
+    int getIndex () { return ind; }
+    bool isFinished () { return hasFinished; }
 private:
-    URL url;
-    Image newImage;
+    String imageAddress;
+    Image image;
+    int ind;
+    bool hasFinished;
 };
+
+
 
 class UpdateTask : public ThreadWithProgressWindow
 {
@@ -120,5 +123,4 @@ public:
 };
 
 
-
-
+// add load from file here

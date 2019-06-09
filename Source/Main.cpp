@@ -21,7 +21,6 @@ public:
     const String getApplicationName() override       { return ProjectInfo::projectName; }
     const String getApplicationVersion() override    { return ProjectInfo::versionString; }
     bool moreThanOneInstanceAllowed() override       { return true;  }
-
     //=============================================================================
     void initialise (const String& commandLine) override
     {
